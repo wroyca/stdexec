@@ -15,3 +15,15 @@ depends: * build2 >= 0.18.0
 depends: * bpkg >= 0.18.0
 tests: libstdexec-tests == $
 requires: c++20
+
+# Note that bdep does not appear to start any CI jobs when we specify
+# minimum compiler configurations here. Until we understand why, leave this
+# disabled and let bdep run the full CI matrix. Some jobs are expected to
+# fail, but the configurations that do work will still give us useful
+# coverage. This is wasteful, so we should ask on Slack for the
+# intended way to express this.
+#
+# builds: all
+# builds: &gcc-12+      ; Upstream minimum is GCC 12.
+# builds: &clang-16+    ; Upstream minimum is Clang 16, including supported Apple Clang/Xcode configurations.
+# builds: &msvc-14+     ; Upstream minimum is MSVC 14.43.
