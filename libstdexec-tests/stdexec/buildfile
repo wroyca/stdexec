@@ -5,7 +5,7 @@ import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
 # scheduler replacement test which must live in a separate executable
 # (see ../parallel_scheduler/buildfile).
 #
-exe{test-stdexec}: cxx{**                          \
+./: exe{test-stdexec}: cxx{**                      \
   -algos/adaptors/test_let_fail1                   \
   -algos/adaptors/test_then_fail1                  \
   -schedulers/test_parallel_scheduler_replacement} \
@@ -18,3 +18,8 @@ cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
 
 if ($cxx.target.class == 'windows')
   cxx.poptions += -DNOMINMAX
+
+# Make sure the cpo_helpers.cuh header (included by some of the test.exec
+# tests) ends up in the distribution.
+#
+./: cpos/file{cpo_helpers.cuh}

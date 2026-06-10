@@ -5,7 +5,7 @@ import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
 # context test (disabled by default upstream and requires the io_uring
 # system call to be available at runtime).
 #
-exe{test-exec}: cxx{**               \
+./: exe{test-exec}: cxx{**           \
   -test_repeat_until_fail            \
   -test_repeat_n_fail                \
   -test_io_uring_context             \
@@ -36,3 +36,8 @@ cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
 
 if ($cxx.target.class == 'windows')
   cxx.poptions += -DNOMINMAX
+
+# Make sure the patch documentation for the modified upstream source file
+# ends up in the distribution.
+#
+./: file{test_trampoline_scheduler.cpp.orig test_trampoline_scheduler.cpp.patch}

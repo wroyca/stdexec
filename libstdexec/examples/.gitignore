@@ -1,6 +1,20 @@
-# Test executables.
+# Example executables (backlinks).
 #
-driver
+problem
+hello_world
+hello_coro
+scope
+sudoku
+retry
+then
+let_value
+on_transfer
+then_upon
+split_bulk
+static_thread_pool
+static_thread_pool_nested
+static_thread_pool_bulk_enqueue
+static_thread_pool_bulk_enqueue_nested
 
 # Testscript output directories (can be symlinks).
 #

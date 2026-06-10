@@ -30,3 +30,10 @@
 # Compilation database.
 #
 compile_commands.json
+
+# Test executables (backlinks).
+#
+test-stdexec
+test-exec
+test-scratch
+test-parallel-scheduler-replacement
