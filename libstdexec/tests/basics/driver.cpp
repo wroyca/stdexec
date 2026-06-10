@@ -1,34 +1,19 @@
-#include <sstream>
-#include <stdexcept>
-
-#include <stdexec/stdexec.hpp>
+#include <stdexec/execution.hpp>
+#include <exec/static_thread_pool.hpp>
 
 #undef NDEBUG
 #include <cassert>
 
+#include <utility>
+
 int main ()
 {
-  using namespace std;
-  using namespace stdexec;
+  exec::static_thread_pool pool (2);
 
-  // Basics.
-  //
-  {
-    ostringstream o;
-    say_hello (o, "World");
-    assert (o.str () == "Hello, World!\n");
-  }
+  auto work = stdexec::starts_on (
+    pool.get_scheduler (),
+    stdexec::just (40) | stdexec::then ([] (int i) {return i + 2;}));
 
-  // Empty name.
-  //
-  try
-  {
-    ostringstream o;
-    say_hello (o, "");
-    assert (false);
-  }
-  catch (const invalid_argument& e)
-  {
-    assert (e.what () == string ("empty name"));
-  }
+  auto [i] = stdexec::sync_wait (std::move (work)).value ();
+  assert (i == 42);
 }
