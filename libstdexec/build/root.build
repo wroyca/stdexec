@@ -2,14 +2,19 @@
 #
 #cxx.internal.scope = current
 
-cxx.std = latest
+# Upstream requires C++20 (CMake: CXX_STANDARD 20, CXX_STANDARD_REQUIRED ON).
+#
+cxx.std = 20
 
 using cxx
 
 hxx{*}: extension = hpp
-ixx{*}: extension = ipp
-txx{*}: extension = tpp
 cxx{*}: extension = cpp
+
+# Build the parallel_scheduler compiled library (upstream's
+# STDEXEC_BUILD_PARALLEL_SCHEDULER CMake option, which is OFF by default).
+#
+config [bool] config.libstdexec.parallel_scheduler ?= false
 
 # The test target for cross-testing (running tests under Wine, etc).
 #

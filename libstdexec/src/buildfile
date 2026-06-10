@@ -1,7 +1,3 @@
-intf_libs = # Interface dependencies.
-impl_libs = # Implementation dependencies.
-#import xxxx_libs += libhello%lib{hello}
-
 # Public headers.
 #
 pub = [dir_path] ../include/
@@ -10,45 +6,72 @@ include $pub
 
 pub_hdrs = $($pub/ pub_hdrs)
 
-lib{stdexec}: $pub/{$pub_hdrs}
+./: lib{stdexec}
 
-# Private headers and sources as well as dependencies.
-#
-lib{stdexec}: {hxx ixx txx cxx}{**} $impl_libs $intf_libs
+lib{stdexec}: $pub/{$pub_hdrs}
 
 # Build options.
 #
-out_pfx_inc = [dir_path] $out_root/include/
 src_pfx_inc = [dir_path] $src_root/include/
-out_pfx_src = [dir_path] $out_root/src/
-src_pfx_src = [dir_path] $src_root/src/
 
-cxx.poptions =+ "-I$out_pfx_src" "-I$src_pfx_src" \
-                "-I$out_pfx_inc" "-I$src_pfx_inc"
+cxx.poptions =+ "-I$src_pfx_inc"
 
-#obja{*}: cxx.poptions += -DSTDEXEC_STATIC_BUILD
-#objs{*}: cxx.poptions += -DSTDEXEC_SHARED_BUILD
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DSTDEXEC_ENABLE_WINDOWS_THREAD_POOL
+elif ($cxx.target.class == 'macos')
+  cxx.poptions += -DSTDEXEC_ENABLE_LIBDISPATCH
+
+if ($cxx.target.class != 'windows')
+  cxx.libs += -pthread
+
+# Upstream requires these MSVC options both when building and consuming
+# (CMake: target_compile_options(stdexec INTERFACE ...)).
+#
+msvc_coptions = /Zc:__cplusplus /Zc:preprocessor /Zc:externConstexpr /bigobj
+
+if ($cxx.class == 'msvc')
+  cxx.coptions += $msvc_coptions
 
 # Export options.
 #
+# Note that since lib{stdexec} is binless (header-only), everything the
+# consumers need must be exported.
+#
 lib{stdexec}:
 {
-  cxx.export.poptions = "-I$out_pfx_inc" "-I$src_pfx_inc"
-  cxx.export.libs = $intf_libs
+  cxx.export.poptions = "-I$src_pfx_inc"
 }
 
-#liba{stdexec}: cxx.export.poptions += -DSTDEXEC_STATIC
-#libs{stdexec}: cxx.export.poptions += -DSTDEXEC_SHARED
+if ($cxx.target.class == 'windows')
+  lib{stdexec}: cxx.export.poptions += -DSTDEXEC_ENABLE_WINDOWS_THREAD_POOL
+elif ($cxx.target.class == 'macos')
+  lib{stdexec}: cxx.export.poptions += -DSTDEXEC_ENABLE_LIBDISPATCH
 
-# For pre-releases use the complete version to make sure they cannot
-# be used in place of another pre-release or the final version. See
-# the version module for details on the version.* variable values.
-#
-if $version.pre_release
-  lib{stdexec}: bin.lib.version = "-$version.project_id"
-else
-  lib{stdexec}: bin.lib.version = "-$version.major.$version.minor"
+if ($cxx.target.class != 'windows')
+  lib{stdexec}: cxx.export.libs = -pthread
 
-# Don't install private headers.
+if ($cxx.class == 'msvc')
+  lib{stdexec}: cxx.export.coptions = $msvc_coptions
+
+# Optional parallel_scheduler compiled library (upstream's
+# STDEXEC_BUILD_PARALLEL_SCHEDULER CMake option).
 #
-{hxx ixx txx}{*}: install = false
+if $config.libstdexec.parallel_scheduler
+{
+  ./: lib{parallel_scheduler}
+
+  lib{parallel_scheduler}: parallel_scheduler/cxx{**} lib{stdexec}
+
+  # Export options (lib{stdexec} is an interface dependency).
+  #
+  lib{parallel_scheduler}: cxx.export.libs = lib{stdexec}
+
+  # For pre-releases use the complete version to make sure they cannot
+  # be used in place of another pre-release or the final version. See
+  # the version module for details on the version.* variable values.
+  #
+  if $version.pre_release
+    lib{parallel_scheduler}: bin.lib.version = "-$version.project_id"
+  else
+    lib{parallel_scheduler}: bin.lib.version = "-$version.major.$version.minor"
+}
