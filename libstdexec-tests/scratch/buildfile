@@ -1,0 +1,12 @@
+import libs = libstdexec%lib{stdexec}
+import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
+
+exe{test-scratch}: cxx{test_scratch} $libs
+
+# Upstream builds the tests with the stdexec namespace renamed to
+# std::execution.
+#
+cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DNOMINMAX

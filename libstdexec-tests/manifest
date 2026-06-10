@@ -1,0 +1,28 @@
+: 1
+name: libstdexec-tests
+version: 0.0.1-a.0.z
+type: tests
+language: c++
+project: stdexec
+summary: Senders/receivers asynchronous execution C++ library tests
+license: Apache-2.0 AND (Apache-2.0 WITH LLVM-exception)
+description-file: README.md
+url: https://github.com/NVIDIA/stdexec
+package-url: https://github.com/build2-packaging/stdexec
+package-email: packaging@build2.org ; Mailing list.
+depends: * build2 >= 0.18.0
+depends: * bpkg >= 0.18.0
+depends: catch2 ^3.7.1
+depends:
+\
+libstdexec == $
+{
+  # Make sure the parallel_scheduler library is built so that we can test
+  # the default implementation replacement.
+  #
+  require
+  {
+    config.libstdexec.parallel_scheduler = true
+  }
+}
+\

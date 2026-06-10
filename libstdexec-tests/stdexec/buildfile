@@ -1,0 +1,20 @@
+import libs = libstdexec%lib{stdexec}
+import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
+
+# Exclude the compile-failure tests (test_*_fail*) and the parallel
+# scheduler replacement test which must live in a separate executable
+# (see ../parallel_scheduler/buildfile).
+#
+exe{test-stdexec}: cxx{**                          \
+  -algos/adaptors/test_let_fail1                   \
+  -algos/adaptors/test_then_fail1                  \
+  -schedulers/test_parallel_scheduler_replacement} \
+  $libs
+
+# Upstream builds the tests with the stdexec namespace renamed to
+# std::execution.
+#
+cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DNOMINMAX

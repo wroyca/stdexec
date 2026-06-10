@@ -1,0 +1,38 @@
+import libs = libstdexec%lib{stdexec}
+import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
+
+# Exclude the compile-failure tests (test_*_fail) as well as the io_uring
+# context test (disabled by default upstream and requires the io_uring
+# system call to be available at runtime).
+#
+exe{test-exec}: cxx{**               \
+  -test_repeat_until_fail            \
+  -test_repeat_n_fail                \
+  -test_io_uring_context             \
+  -test_libdispatch                  \
+  -test_windows_thread_pool_context  \
+  -sequence/test_merge_each          \
+  -sequence/test_merge_each_threaded}
+
+# Platform-specific tests.
+#
+exe{test-exec}: cxx{test_libdispatch}: \
+  include = ($cxx.target.class == 'macos')
+
+exe{test-exec}: cxx{test_windows_thread_pool_context}: \
+  include = ($cxx.target.class == 'windows')
+
+# These tests cause MSVC to run out of memory.
+#
+exe{test-exec}: sequence/cxx{test_merge_each test_merge_each_threaded}: \
+  include = ($cxx.class != 'msvc')
+
+exe{test-exec}: $libs
+
+# Upstream builds the tests with the stdexec namespace renamed to
+# std::execution.
+#
+cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DNOMINMAX

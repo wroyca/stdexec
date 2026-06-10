@@ -1,0 +1,2 @@
+./: {*/ -build/ -test_common/} test_common/hxx{*} \
+    doc{README.md} legal{LICENSE.txt} manifest

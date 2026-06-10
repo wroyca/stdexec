@@ -1,0 +1,13 @@
+import libs = libstdexec%lib{parallel_scheduler}
+import libs += catch2%liba{catch2wmain} catch2%lib{catch2}
+
+exe{test-parallel-scheduler-replacement}: \
+  cxx{test_parallel_scheduler_replacement} $libs
+
+# Upstream builds the tests with the stdexec namespace renamed to
+# std::execution.
+#
+cxx.poptions += "-I$src_root" "-DSTDEXEC_NAMESPACE=std::execution"
+
+if ($cxx.target.class == 'windows')
+  cxx.poptions += -DNOMINMAX

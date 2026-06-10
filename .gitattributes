@@ -23,3 +23,15 @@
 libstdexec/include/stdexec        symlink=dir
 libstdexec/include/exec           symlink=dir
 libstdexec/src/parallel_scheduler symlink=dir
+libstdexec-tests/test_common      symlink=dir
+libstdexec-tests/stdexec/cpos     symlink=dir
+libstdexec-tests/stdexec/concepts symlink=dir
+libstdexec-tests/stdexec/algos    symlink=dir
+libstdexec-tests/stdexec/detail   symlink=dir
+libstdexec-tests/stdexec/schedulers symlink=dir
+libstdexec-tests/stdexec/queries  symlink=dir
+libstdexec-tests/stdexec/types    symlink=dir
+libstdexec-tests/exec/async_scope symlink=dir
+libstdexec-tests/exec/sequence    symlink=dir
+libstdexec/examples/algorithms    symlink=dir
+libstdexec/examples/server_theme  symlink=dir

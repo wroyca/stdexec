@@ -1,0 +1,11 @@
+--- test_trampoline_scheduler.cpp.orig	2026-06-10 17:00:54.600705763 -0400
++++ test_trampoline_scheduler.cpp	2026-06-10 17:19:39.135884879 -0400
+@@ -15,7 +15,7 @@
+  * limitations under the License.
+  */
+ 
+-#include "../../include/exec/trampoline_scheduler.hpp"
++#include <exec/trampoline_scheduler.hpp>
+ 
+ #include "../test_common/retry.hpp"
+ 
