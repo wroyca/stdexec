@@ -17,3 +17,9 @@
 # Use `binary` to make sure certain files are never auto-detected as text.
 #
 #*.png binary
+
+# Allow directory symlinks on Windows.
+#
+libstdexec/include/stdexec        symlink=dir
+libstdexec/include/exec           symlink=dir
+libstdexec/src/parallel_scheduler symlink=dir
