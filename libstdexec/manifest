@@ -3,14 +3,15 @@ name: libstdexec
 version: 0.0.1-a.0.z
 language: c++
 project: stdexec
-summary: Senders - A Standard Model for Asynchronous Execution in C++
-license: Apache-2.0 ; Apache License 2.0.
+summary: Senders/receivers asynchronous execution C++ library
+license: Apache-2.0 AND Apache-2.0 WITH LLVM-exception ; Some files use the LLVM exception.
+topics: concurrency, asynchronous execution, senders receivers
 description-file: README.md
 package-description-file: PACKAGE-README.md
-url: https://example.org/upstream
-email: upstream@example.org
+url: https://github.com/NVIDIA/stdexec
 package-url: https://github.com/build2-packaging/stdexec
 package-email: packaging@build2.org ; Mailing list.
 depends: * build2 >= 0.18.0
 depends: * bpkg >= 0.18.0
 tests: libstdexec-tests == $
+requires: c++20
