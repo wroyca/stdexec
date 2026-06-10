@@ -1,0 +1,1 @@
+../../upstream/examples/scope.cpp

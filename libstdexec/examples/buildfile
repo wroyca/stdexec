@@ -1,0 +1,40 @@
+import libs = libstdexec%lib{stdexec}
+
+for src: cxx{*} server_theme/cxx{*}
+  ./: exe{$name($src)}: $src $libs
+
+./: algorithms/hxx{*} benchmark/hxx{*}
+
+# The sudoku example uses the header-only parallel scheduler implementation
+# (upstream's default when STDEXEC_BUILD_PARALLEL_SCHEDULER is disabled).
+# Note that we only build but don't run it: it currently fails an internal
+# assertion (note that upstream does not run any of the examples on its CI).
+#
+obje{sudoku}: cxx.poptions += -DSTDEXEC_PARALLEL_SCHEDULER_HEADER_ONLY
+exe{sudoku}: test = false
+
+# The benchmarks are built but not run. Upstream does not build the last
+# three on Windows (the object file names are too long) which we replicate
+# here.
+#
+./: exe{static_thread_pool}: benchmark/cxx{static_thread_pool} $libs
+
+w = ($cxx.target.class != 'windows')
+
+./: exe{static_thread_pool_nested}: include = $w
+./: exe{static_thread_pool_bulk_enqueue}: include = $w
+./: exe{static_thread_pool_bulk_enqueue_nested}: include = $w
+
+exe{static_thread_pool_nested}: \
+  benchmark/cxx{static_thread_pool_nested} $libs
+
+exe{static_thread_pool_bulk_enqueue}: \
+  benchmark/cxx{static_thread_pool_bulk_enqueue} $libs
+
+exe{static_thread_pool_bulk_enqueue_nested}: \
+  benchmark/cxx{static_thread_pool_bulk_enqueue_nested} $libs
+
+exe{static_thread_pool                    \
+    static_thread_pool_nested             \
+    static_thread_pool_bulk_enqueue       \
+    static_thread_pool_bulk_enqueue_nested}: test = false

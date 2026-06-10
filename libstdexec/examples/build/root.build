@@ -1,0 +1,15 @@
+cxx.std = 20
+
+using cxx
+
+hxx{*}: extension = hpp
+cxx{*}: extension = cpp
+
+# Every exe{} in this subproject is by default a test (this is overridden
+# for the benchmarks which are only built).
+#
+exe{*}: test = true
+
+# The test target for cross-testing (running tests under Wine, etc).
+#
+test.target = $cxx.target
